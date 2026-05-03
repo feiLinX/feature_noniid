@@ -16,7 +16,8 @@ from data_sampling import clipart_trainset, clipart_testset, quickdraw_trainset,
 from aggregation import simple_mean, weighted_avg, ndc, krum, multikrum
 from model import ResNet18, ResNet34, ResNet50, FangCNN
 
-
+dv_dict_digits = {'svhn': svhn_trainset, 'syn': syn_trainset, 'mnist_m': mnistm_trainset, 'usps': usps_trainset}
+adv_dict_domain = {'quickdraw': quickdraw_trainset, 'clipart': clipart_trainset, 'real': real_trainset, 'painting': painting_trainset, 'sketch': sketch_trainset, 'infograph': infograph_trainset}
 label_dict={'0':0, '1':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9}
 agg_dict = {'simple mean': simple_mean,
             'weighted fedavg': weighted_avg,
