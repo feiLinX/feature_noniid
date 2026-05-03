@@ -1,5 +1,3 @@
-temp readme file
+This is the repo for some basic implementations of our work. The data can be downloaded by two anonymous Google Drive links shared by us: https://drive.google.com/file/d/1BduLPy9R8PKhh9-PC3yI6-jHjXE6qCRF/view?usp=sharing, and https://drive.google.com/file/d/1xXcW2H65l84FETpNf3BMiG3SR2UmgY1X/view?usp=sharing. Please unzip the data into the ./data directory.
 
-updates
-
-Aaa123454321
+The implementation of our attack and defense is in feature.py. The models we used are in model.py, the data loaders and FL system setup (as well as non-iid client settings) are in data_sampling.py. The FL aggregation methods and defense baselines are in aggregation.py. Parser is in settings.py. Note that the FL client setup process is random, i.e., the data samples distributed to each client can be different each time, thus may affecting the performance.
