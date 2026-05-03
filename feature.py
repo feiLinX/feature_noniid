@@ -250,6 +250,55 @@ def Recon(model, grad_list, dummy_data_list, dummy_label_list, lr=0.01, iteratio
         
     return dummy_data_list, dummy_label_list
 
+def filter_c(dummy_data_list, dummy_label_list):
+    n = len(dummy_data_list)
+    if n <= 1:
+        return dummy_data_list, dummy_label_list
+    
+    dist = np.zeros((n, n))
+    for i in range(n):
+        for j in range(i + 1, n):
+            # get_kld_client computes symmetric KLD
+            d = get_kld_client(dummy_data_list[i].detach().cpu(), dummy_data_list[j].detach().cpu())
+            dist[i, j] = d
+            dist[j, i] = d
+            
+    medoids = np.random.choice(n, 2, replace=False)
+    
+    for _ in range(20): # max_iter
+        clusters = {0: [], 1: []}
+        for i in range(n):
+            dist_to_0 = dist[i, medoids[0]]
+            dist_to_1 = dist[i, medoids[1]]
+            if dist_to_0 < dist_to_1:
+                clusters[0].append(i)
+            else:
+                clusters[1].append(i)
+                
+        # Update medoids
+        new_medoids = []
+        for k in range(2):
+            if len(clusters[k]) == 0:
+                new_medoids.append(medoids[k])
+                continue
+            cluster_indices = clusters[k]
+
+            sub_matrix = dist[np.ix_(cluster_indices, cluster_indices)]
+            best_idx_in_cluster = np.argmin(sub_matrix.sum(axis=1))
+            new_medoids.append(cluster_indices[best_idx_in_cluster])
+            
+        if set(new_medoids) == set(medoids):
+            break
+        medoids = new_medoids
+        
+    # Remove the smaller group
+    l_cluster = clusters[0] if len(clusters[0]) > len(clusters[1]) else clusters[1]
+    
+    filtered_data = [dummy_data_list[i] for i in l_cluster]
+    filtered_label = [dummy_label_list[i] for i in l_cluster]
+    
+    return filtered_data, filtered_label
+
 
 def evaluate(loader, model, criterion, device):
     model.eval()
